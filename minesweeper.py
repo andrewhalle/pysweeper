@@ -72,7 +72,9 @@ class Minesweeper:
     def print(self):
         for i in range(self.size):
             for j in range(self.size):
-                if self._get(i, j).is_safe():
+                if self._get(i, j).covered:
+                    sys.stdout.write("o ")
+                elif self._get(i, j).is_safe():
                     sys.stdout.write(". ")
                 else:
                     sys.stdout.write("* ")
