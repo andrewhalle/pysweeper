@@ -6,28 +6,48 @@ import sys
 
 class Cell:
 
-    def __init__(self, val):
-        self.val = val
+    def __init__(self, field):
+        self.has_mine = False
+        self.has_flag = False
+        self.mine_neighbors = None
         self.covered = True
+        self.field = field
 
-    def uncover(self):
+    def _calc_mine_neighbors(self):
+        self.mine_neighors = 0
+
+    def _display_value(self):
+        if self.mine_neighbors is None:
+            self._calc_mine_neighbors()
+        if self.covered and self.has_flag:
+            return "^"
+        elif self.covered:
+            return "o"
+        elif self.has_mine:
+            return "*"
+        elif self.mine_neighbors == 0:
+            return "."
+        else:
+            return str(self.mine_neighbors)
+
+    def _place_mine(self):
+        self.has_mine = False
+
+    def _uncover(self):
         self.covered = False
 
-    def is_safe(self):
-        return self.val is CellValue.SAFE
+    def _is_safe(self):
+        return not self.has_mine
 
-
-class CellValue(Enum):
-    SAFE = 0
-    MINE = 1
 
 
 class Minesweeper:
 
     @staticmethod
     def get_move():
-        input(">>> ")
-        return None
+        move = input(">>> ")
+        move = tuple(map(int, move.split()))
+        return move
 
     def __init__(self, args):
         self.play_again = True
@@ -45,20 +65,28 @@ class Minesweeper:
         self.playing = None
         self.field = []
         for i in range(self.size**2):
-            self.field.append(Cell(CellValue.SAFE))
+            self.field.append(Cell(self.field))
         mines = self.size
         while mines != 0:
             row, col = randint(0, self.size-1), randint(0, self.size-1)
-            if self._get(row, col).is_safe():
-                self._set(row, col, Cell(CellValue.MINE))
+            cell = self._get(row, col)
+            if cell._is_safe():
+                cell._place_mine()
                 mines -= 1
+
+    def _enter(self, move):
+        self._get(*move)._uncover()
+
+    def _check_win(self):
+        return None
 
     def play(self):
         self.playing = True
         while self.playing:
             self.print()
             move = Minesweeper.get_move()
-            self.playing = False
+            self._enter(move)
+            self._check_win()
         self.ask_play_again()
 
     def ask_play_again(self):
@@ -72,13 +100,7 @@ class Minesweeper:
     def print(self):
         for i in range(self.size):
             for j in range(self.size):
-                if self._get(i, j).covered:
-                    sys.stdout.write("o ")
-                elif self._get(i, j).is_safe():
-                    sys.stdout.write(". ")
-                else:
-                    sys.stdout.write("* ")
-                sys.stdout.write(" ")
+                sys.stdout.write(self._get(i, j)._display_value() + " ")
             sys.stdout.write("\n")
 
 
