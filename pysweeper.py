@@ -1,5 +1,5 @@
 import argparse
-from random import seed, randint
+from random import randint
 import sys
 
 
@@ -42,10 +42,13 @@ class Minesweeper:
         move = tuple(map(int, move.split()))
         return move
 
-    def __init__(self, args):
+    def __init__(self, args=None):
         self.play_again = True
         self.playing = None
-        self.size = args.size
+        if args is None:
+            self.size = 10
+        else:
+            self.size = args.size
         self.field = []
 
     def _get(self, row, col):
@@ -139,7 +142,6 @@ class Minesweeper:
 
 
 if __name__ == "__main__":
-    seed(2)
     parser = argparse.ArgumentParser(description="play minesweeper!")
     parser.add_argument("-n", "--size", action="store",
             type=int, default=10, help="board size")
