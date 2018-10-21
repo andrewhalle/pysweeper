@@ -55,7 +55,6 @@ class Minesweeper:
             return None
 
     def _get_neighbors_with_mines(self, row, col):
-        breakpoint()
         neighbors = []
         cell = self._get(row, col)
         for i in range(row-1, row+2):
