@@ -1,34 +1,27 @@
 import argparse
-from enum import Enum
 from random import randint
 import sys
 
 
 class Cell:
 
-    def __init__(self, field):
+    def __init__(self):
         self.has_mine = False
         self.has_flag = False
-        self.mine_neighbors = None
+        self.neighbors_with_mines = None
         self.covered = True
-        self.field = field
-
-    def _calc_mine_neighbors(self):
-        self.mine_neighors = 0
 
     def _display_value(self):
-        if self.mine_neighbors is None:
-            self._calc_mine_neighbors()
         if self.covered and self.has_flag:
             return "^"
         elif self.covered:
             return "o"
         elif self.has_mine:
             return "*"
-        elif self.mine_neighbors == 0:
+        elif self.neighbors_with_mines == 0:
             return "."
         else:
-            return str(self.mine_neighbors)
+            return str(self.neighbors_with_mines)
 
     def _place_mine(self):
         self.has_mine = False
@@ -56,7 +49,25 @@ class Minesweeper:
         self.field = []
 
     def _get(self, row, col):
-        return self.field[row*self.size + col]
+        if row >= 0 and row < self.size and col >= 0 and col < self.size:
+            return self.field[row*self.size + col]
+        else:
+            return None
+
+    def _get_neighbors_with_mines(self, row, col):
+        neighbors = []
+        cell = self._get(row, col)
+        for i in range(row-1, row+2):
+            for j in range(col-1, col+2):
+                if i != row and j != col:
+                    curr = self._get(i, j)
+                    if curr is not None:
+                        neighbors.append(curr)
+        neighbors_with_mines = 0
+        for n in neighbors:
+            if n.has_mine:
+                neighbors_with_mines += 1
+        return neighbors_with_mines
 
     def _set(self, row, col, val):
         self.field[row*self.size + col] = val
@@ -65,17 +76,30 @@ class Minesweeper:
         self.playing = None
         self.field = []
         for i in range(self.size**2):
-            self.field.append(Cell(self.field))
+            self.field.append(Cell())
         mines = self.size
         while mines != 0:
             row, col = randint(0, self.size-1), randint(0, self.size-1)
             cell = self._get(row, col)
-            if cell._is_safe():
-                cell._place_mine()
+            if not cell.has_mine:
+                cell.has_mine = True
                 mines -= 1
+        for i in range(self.size):
+            for j in range(self.size):
+                self._get(i, j).neighbors_with_mines = self._get_neighbors_with_mines(i, j)
 
+    def _uncover(self, row, col):
+        cell = self._get(row, col)
+        if cell is None or not cell.covered:
+            return
+        cell.covered = False
+        if cell.neighbors_with_mines == 0:
+            for i in range(row-1, row+2):
+                for j in range(col-1, col+2):
+                    self._uncover(i, j)
+            
     def _enter(self, move):
-        self._get(*move)._uncover()
+        self._uncover(*move)
 
     def _check_win(self):
         return None
@@ -101,6 +125,16 @@ class Minesweeper:
         for i in range(self.size):
             for j in range(self.size):
                 sys.stdout.write(self._get(i, j)._display_value() + " ")
+            sys.stdout.write("\n")
+
+    def _peek(self):
+        for i in range(self.size):
+            for j in range(self.size):
+                cell = self._get(i, j)
+                if cell.has_mine:
+                    sys.stdout.write("* ")
+                else:
+                    sys.stdout.write(". ")
             sys.stdout.write("\n")
 
 
