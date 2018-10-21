@@ -1,5 +1,5 @@
 import argparse
-from random import randint
+from random import seed, randint
 import sys
 
 
@@ -55,11 +55,12 @@ class Minesweeper:
             return None
 
     def _get_neighbors_with_mines(self, row, col):
+        breakpoint()
         neighbors = []
         cell = self._get(row, col)
         for i in range(row-1, row+2):
             for j in range(col-1, col+2):
-                if i != row and j != col:
+                if not (i == row and j == col):
                     curr = self._get(i, j)
                     if curr is not None:
                         neighbors.append(curr)
@@ -139,6 +140,7 @@ class Minesweeper:
 
 
 if __name__ == "__main__":
+    seed(2)
     parser = argparse.ArgumentParser(description="play minesweeper!")
     parser.add_argument("-n", "--size", action="store",
             type=int, default=10, help="board size")
