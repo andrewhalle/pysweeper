@@ -42,13 +42,10 @@ class Minesweeper:
         move = tuple(map(int, move.split()))
         return move
 
-    def __init__(self, args=None):
+    def __init__(self, size=10):
         self.play_again = True
         self.playing = None
-        if args is None:
-            self.size = 10
-        else:
-            self.size = args.size
+        self.size = size
         self.field = []
 
     def _get(self, row, col):
@@ -146,7 +143,7 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--size", action="store",
             type=int, default=10, help="board size")
     args = parser.parse_args()
-    game = Minesweeper(args)
+    game = Minesweeper(size=args.size)
     while game.play_again:
         game.reset()
         game.play()
