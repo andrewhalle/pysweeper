@@ -1,12 +1,6 @@
-from distutils.core import setup
-
+from setuptools import setup, find_packages
 setup(
-    name='pysweeper',
-    version='0.1.0',
-    author='Andrew Halle',
-    author_email='ahalle@berkeley.edu',
-    packages=["pysweeper"],
-    scripts=["main.py"],
-    url='andrewhalle.com',
-    description='minesweeper',
+    name="pysweeper",
+    version="0.1",
+    packages=find_packages(),
 )
