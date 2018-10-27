@@ -37,8 +37,11 @@ class Minesweeper:
 
     @staticmethod
     def get_move():
-        move = input(">>> ")
-        move = tuple(map(int, move.split()))
+        move = input(">>> ").split()
+        if len(move) == 2:
+            move = tuple(map(int, move))
+        else:
+            move = (move[0], int(move[1]), int(move[2]))
         return move
 
     def __init__(self, size=10):
@@ -98,7 +101,11 @@ class Minesweeper:
                     self._uncover(i, j)
             
     def _enter(self, move):
-        self._uncover(*move)
+        if move[0] == "f":
+            cell = self._get(*move[1:])
+            cell.has_flag = not cell.has_flag
+        else:
+            self._uncover(*move)
 
     def _check_win(self):
         return None
