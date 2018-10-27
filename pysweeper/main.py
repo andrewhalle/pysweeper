@@ -1,3 +1,5 @@
+import argparse
+
 from pysweeper.game import Minesweeper
 
 parser = argparse.ArgumentParser(description="play minesweeper!")
