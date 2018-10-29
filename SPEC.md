@@ -2,6 +2,6 @@
 
 - Minesweeper class option, interactive vs non-interactive
 
-- command line option for setting number of mines (default to size?)
+- option for setting number of mines (default to size?)
 
 - option for protecting first click
