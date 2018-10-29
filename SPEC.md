@@ -4,4 +4,4 @@
 
 - command line option for setting number of mines (default to size?)
 
-- command line option for protecting first click
+- option for protecting first click
